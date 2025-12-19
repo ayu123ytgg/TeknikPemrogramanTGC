@@ -1,0 +1,38 @@
+class Sensor:
+    """
+    Kelas dasar untuk merepresentasikan sensor umum
+    """
+    def __init__(self, sensor_id, lokasi, jenis):
+        self.sensor_id = sensor_id
+        self.lokasi = lokasi
+        self.jenis = jenis
+
+    def info(self):
+        return f"ID Sensor : {self.sensor_id} | Lokasi : {self.lokasi} | Jenis : {self.jenis}"
+
+
+class SensorSeismik(Sensor):
+    """
+    Kelas turunan Sensor untuk sensor seismik
+    """
+    def __init__(self, sensor_id, lokasi, jenis, frekuensi_sampling):
+        super().__init__(sensor_id, lokasi, jenis)
+        self.frekuensi_sampling = frekuensi_sampling  # Hz
+
+    def jumlah_sampel(self, durasi_detik):
+        """
+        Menghitung jumlah sampel berdasarkan durasi (detik)
+        """
+        return int(self.frekuensi_sampling * durasi_detik)
+
+
+# =====================
+# Program Utama
+# =====================
+if __name__ == "__main__":
+    sensor_umum = Sensor("S001", "Lampung", "Suhu")
+    print(sensor_umum.info())
+
+    sensor_seismik = SensorSeismik("SS01", "Padang", "Seismometer", 100)
+    print(sensor_seismik.info())
+    print(f"Jumlah sampel dalam 60 detik : {sensor_seismik.jumlah_sampel(60)} data")
