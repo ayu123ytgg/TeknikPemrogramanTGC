@@ -1,0 +1,78 @@
+# ===================================
+# Tugas 1: Sensor & Sensor Seismik
+# ===================================
+
+from abc import ABC, abstractmethod
+
+# === Class Sensor Dasar ===
+class Sensor:
+    def __init__(self, kode: str, lokasi: str, kategori: str):
+        self.kode = kode
+        self.lokasi = lokasi
+        self.kategori = kategori
+
+    def deskripsi(self) -> str:
+        return f"ID: {self.kode} | Lokasi: {self.lokasi} | Jenis: {self.kategori}"
+
+
+# === Class Turunan: Sensor Seismik ===
+class SensorSeismik(Sensor):
+    def __init__(self, kode: str, lokasi: str, kategori: str, frekuensi_sampling: int):
+        super().__init__(kode, lokasi, kategori)
+        self.frekuensi_sampling = frekuensi_sampling
+
+    def jumlah_sampel(self, durasi: float) -> int:
+        if durasi < 0:
+            raise ValueError("Durasi harus bernilai positif")
+        return int(self.frekuensi_sampling * durasi)
+
+
+# =================================
+# Tugas 2: Survey & Turunannya
+# =================================
+class Survey(ABC):
+    def __init__(self, sensor: Sensor):
+        self.sensor = sensor
+
+    @abstractmethod
+    def processing(self):
+        pass
+
+
+# === Turunan Survey ===
+class SeismicSurvey(Survey):
+    def processing(self):
+        print(f"[{self.sensor.deskripsi()}] Proses filtering seismik")
+
+
+class GravitySurvey(Survey):
+    def processing(self):
+        print(f"[{self.sensor.deskripsi()}] Proses upward continuation gravitasi")
+
+
+class MagnetikSurvey(Survey):
+    def processing(self):
+        print(f"[{self.sensor.deskripsi()}] Proses pemetaan anomali magnetik")
+
+
+# === Program Utama ===
+if __name__ == "__main__":
+    # Sensor umum
+    sensor_umum = Sensor("S-01", "Jakarta", "Temperature")
+    print(sensor_umum.deskripsi())
+
+    # Sensor seismik
+    sensor_seismik = SensorSeismik("SS-01", "Bandung", "Seismik", frekuensi_sampling=100)
+    print(sensor_seismik.deskripsi())
+    print("Jumlah sampel 10 detik:", sensor_seismik.jumlah_sampel(10))
+
+    # Daftar survey
+    daftar_survey = [
+        SeismicSurvey(sensor_seismik),
+        GravitySurvey(Sensor("S-02", "Surabaya", "Gravitasi")),
+        MagnetikSurvey(Sensor("S-03", "Medan", "Magnetik"))
+    ]
+
+    # Jalankan semua survey
+    for s in daftar_survey:
+        s.processing()
