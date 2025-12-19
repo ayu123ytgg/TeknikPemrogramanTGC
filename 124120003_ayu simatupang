@@ -1,0 +1,100 @@
+import pandas as pd
+import numpy as np
+
+
+FILE_DATA = "survey_gravitasi.csv"
+
+
+def load_or_generate_data(n=20):
+    """
+    Membaca data survey gravitasi dari file.
+    Jika file tidak tersedia, data dummy akan dibuat.
+    """
+    try:
+        data = pd.read_csv(FILE_DATA)
+        print("Data survey berhasil dibaca dari file.")
+    except FileNotFoundError:
+        print("File tidak ditemukan, membuat data simulasi...")
+        data = pd.DataFrame({
+            "Koordinat_Timur": np.random.rand(n) * 100,
+            "Koordinat_Utara": np.random.rand(n) * 100,
+            "Elevasi": np.random.rand(n) * 50 + 10,
+            "Anomali_gravitasi_mgal": np.random.randn(n) * 3
+        })
+        data.to_csv(FILE_DATA, index=False)
+        print("Data simulasi disimpan ke survey_gravitasi.csv")
+
+    return data
+
+
+def analisis_anomali(data, faktor=2.0):
+    """
+    Analisis anomali gravitasi menggunakan ambang standar deviasi
+    """
+    rata_rata = data["Anomali_gravitasi_mgal"].mean()
+    std_dev = data["Anomali_gravitasi_mgal"].std()
+    batas = faktor * std_dev
+
+    anomali_pos = data[data["Anomali_gravitasi_mgal"] > batas]
+    anomali_neg = data[data["Anomali_gravitasi_mgal"] < -batas]
+
+    return rata_rata, std_dev, batas, anomali_pos, anomali_neg
+
+
+def simpan_anomali(data, nama_file):
+    """
+    Menyimpan data anomali ke file CSV
+    """
+    if not data.empty:
+        data.to_csv(nama_file, index=False)
+        print(f"Data disimpan: {nama_file}")
+
+
+def tampilkan_lokasi(data, judul, jumlah=3):
+    """
+    Menampilkan lokasi anomali
+    """
+    if not data.empty:
+        print(judul)
+        for _, row in data.head(jumlah).iterrows():
+            print(
+                f"  - ({row['Koordinat_Timur']:.1f}, "
+                f"{row['Koordinat_Utara']:.1f}) "
+                f"= {row['Anomali_gravitasi_mgal']:.2f} mgal"
+            )
+
+
+# =====================
+# Program Utama
+# =====================
+def main():
+    data = load_or_generate_data()
+
+    rata, std, batas, pos, neg = analisis_anomali(data)
+
+    print("\n=== HASIL ANALISIS GRAVITASI ===")
+    print(f"Jumlah data           : {len(data)} titik")
+    print(f"Rata-rata anomali     : {rata:.2f} mgal")
+    print(f"Standar deviasi       : {std:.2f} mgal")
+    print(f"Batas anomali         : ±{batas:.2f} mgal")
+    print(f"Anomali positif       : {len(pos)} titik")
+    print(f"Anomali negatif       : {len(neg)} titik")
+
+    simpan_anomali(pos, "anomali_positif.csv")
+    simpan_anomali(neg, "anomali_negatif.csv")
+
+    print("\n=== LOKASI ANOMALI ===")
+    tampilkan_lokasi(pos, "Anomali positif ditemukan di:")
+    tampilkan_lokasi(neg, "Anomali negatif ditemukan di:")
+
+    print("\n=== INTERPRETASI SEDERHANA ===")
+    if not pos.empty:
+        print("• Anomali positif → indikasi batuan berdensitas tinggi")
+    if not neg.empty:
+        print("• Anomali negatif → indikasi batuan berdensitas rendah / rongga")
+    if pos.empty and neg.empty:
+        print("• Tidak ditemukan anomali signifikan")
+
+
+if __name__ == "__main__":
+    main()
