@@ -1,0 +1,120 @@
+# ===============================
+# CEK BILANGAN GANJIL / GENAP
+# ===============================
+angka = 10
+
+if angka % 2 == 1:
+    print("Bilangan Ganjil")
+    angka = angka ** 2
+    print("Hasil kuadrat:", angka)
+elif angka % 2 == 0:
+    print("Bilangan Genap")
+else:
+    print("Bukan bilangan")
+
+# ===============================
+# PENILAIAN 1
+# ===============================
+nilai = 70
+
+if nilai >= 90:
+    print("A")
+elif nilai >= 80:
+    print("AB")
+elif nilai >= 70:
+    print("B")
+elif nilai >= 60:
+    print("BC")
+
+# ===============================
+# PENILAIAN 2
+# ===============================
+nilai = 60
+
+if nilai >= 90:
+    print("A")
+elif nilai >= 80:
+    print("AB")
+elif nilai >= 70:
+    print("B")
+elif nilai >= 60:
+    print("BC")
+else:
+    print("E --> TIDAK LULUS")
+
+# ===============================
+# APLIKASI KASIR DISKON
+# ===============================
+jumlah_barang = 3
+total_belanja = 100_000
+
+pakai_kupon = input("Punya kupon diskon 20%? (ya/tidak): ").lower()
+
+diskon = 0.2 * total_belanja if pakai_kupon == "ya" else 0
+total_bayar = total_belanja - diskon
+
+print("\n===== STRUK BELANJA =====")
+print(f"Jumlah Barang : {jumlah_barang}")
+print(f"Total Belanja : Rp{total_belanja:,}")
+print(f"Diskon        : Rp{int(diskon):,}")
+print(f"Total Akhir   : Rp{int(total_bayar):,}")
+print("=========================")
+
+# ===============================
+# PERULANGAN FOR
+# ===============================
+for i in range(100):
+    print(i)
+
+# ===============================
+# CEK GANJIL GENAP DENGAN FOR
+# ===============================
+for i in range(100):
+    if i % 2 == 0:
+        print(f"{i} adalah Genap")
+    else:
+        print(f"{i} adalah Ganjil")
+
+# ===============================
+# PERULANGAN WHILE
+# ===============================
+i = 0
+while True:
+    print("Looping ke-", i)
+    i += 1
+    if i > 100:
+        break
+
+# ===============================
+# LOGIN SEDERHANA
+# ===============================
+username_benar = "hubungan"
+password_benar = "1234567"
+
+percobaan = 0
+while percobaan < 3:
+    user = input("Username: ")
+    pw = input("Password: ")
+
+    if user == username_benar and pw == password_benar:
+        print("Login Berhasil")
+        break
+    else:
+        print("Login Gagal")
+        percobaan += 1
+
+# ===============================
+# RATA-RATA USIA KELUARGA
+# ===============================
+jumlah = int(input("Masukkan jumlah anggota keluarga: "))
+total_usia = 0
+
+for i in range(jumlah):
+    usia = int(input(f"Usia anggota ke-{i+1}: "))
+    total_usia += usia
+
+if jumlah > 0:
+    rata2 = total_usia / jumlah
+    print(f"Rata-rata usia keluarga: {rata2}")
+else:
+    print("Jumlah anggota tidak valid")
