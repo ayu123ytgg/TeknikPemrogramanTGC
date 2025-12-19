@@ -1,0 +1,61 @@
+# Data awal
+data_survey = {
+    "Survey_A": [
+        {"id": 1, "rcv": "R1", "offset": 100, "qc": "OK"},
+        {"id": 2, "rcv": "R2", "offset": 150, "qc": "OK"},
+        {"id": 3, "rcv": "R3", "offset": 200, "qc": "BAD"}
+    ],
+    "Survey_B": [
+        {"id": 4, "rcv": "R1", "offset": 120, "qc": "OK"},
+        {"id": 5, "rcv": "R4", "offset": 250, "qc": "OK"},
+        {"id": 6, "rcv": "R2", "offset": 300, "qc": "BAD"}
+    ]
+}
+
+# 1. Tampilkan semua trace dengan status QC = BAD
+trace_bad = []
+for daftar in data_survey.values():
+    for t in daftar:
+        if t["qc"] == "BAD":
+            trace_bad.append(t["id"])
+
+print("Trace dengan QC BAD:", trace_bad)
+
+# 2. Hitung total trace seluruh survey
+jumlah_trace = 0
+for daftar in data_survey.values():
+    jumlah_trace += len(daftar)
+
+print("Total trace:", jumlah_trace)
+
+# 3. Survey dengan trace terbanyak
+survey_terbanyak = None
+maks_trace = 0
+
+for nama, daftar in data_survey.items():
+    if len(daftar) > maks_trace:
+        maks_trace = len(daftar)
+        survey_terbanyak = nama
+
+print("Survey dengan trace terbanyak:", survey_terbanyak)
+
+# 4. Receiver unik
+receiver_unik = set()
+for daftar in data_survey.values():
+    for t in daftar:
+        receiver_unik.add(t["rcv"])
+
+print("Receiver unik:", receiver_unik)
+
+# 5. Hitung jumlah trace tiap receiver
+hitung_receiver = {}
+
+for daftar in data_survey.values():
+    for t in daftar:
+        r = t["rcv"]
+        if r not in hitung_receiver:
+            hitung_receiver[r] = 1
+        else:
+            hitung_receiver[r] += 1
+
+print("Jumlah trace per receiver:", hitung_receiver)
