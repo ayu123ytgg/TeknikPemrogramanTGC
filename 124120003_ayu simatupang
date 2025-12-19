@@ -1,0 +1,84 @@
+import csv
+import os
+
+
+FILE_INPUT = "data_seismik.txt"
+FILE_OUTPUT = "data_normalisasi.csv"
+
+
+def buat_file_data():
+    """
+    Membuat file data seismik jika belum tersedia
+    """
+    if not os.path.exists(FILE_INPUT):
+        print("File data_seismik.txt belum ada, membuat file baru...")
+        with open(FILE_INPUT, "w", encoding="utf-8") as f:
+            f.write("shot,receiver,twt\n")
+            f.write("0,100,200\n")
+            f.write("0,200,350\n")
+            f.write("0,300,480\n")
+            f.write("0,400,600\n")
+
+
+def baca_data():
+    """
+    Membaca data seismik dari file txt
+    """
+    data = []
+    with open(FILE_INPUT, "r", encoding="utf-8") as file:
+        reader = csv.reader(file)
+        header = next(reader)
+        print("Header:", header)
+
+        for row in reader:
+            if row:
+                data.append([int(row[0]), int(row[1]), int(row[2])])
+    return data
+
+
+def normalisasi_twt(data):
+    """
+    Normalisasi nilai TWT menggunakan metode min-max
+    """
+    twt_values = [d[2] for d in data]
+    t_min, t_max = min(twt_values), max(twt_values)
+
+    hasil = []
+    for shot, receiver, twt in data:
+        twt_norm = (twt - t_min) / (t_max - t_min)
+        hasil.append([shot, receiver, twt, round(twt_norm, 3)])
+
+    return hasil
+
+
+def simpan_hasil(data):
+    """
+    Menyimpan hasil normalisasi ke file CSV
+    """
+    with open(FILE_OUTPUT, "w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        writer.writerow(["shot", "receiver", "twt", "twt_norm"])
+        writer.writerows(data)
+
+
+# =====================
+# Program Utama
+# =====================
+def main():
+    buat_file_data()
+
+    print("=== Isi File Data Seismik ===")
+    with open(FILE_INPUT, "r", encoding="utf-8") as f:
+        print(f.read())
+
+    data_seismik = baca_data()
+    hasil_normalisasi = normalisasi_twt(data_seismik)
+    simpan_hasil(hasil_normalisasi)
+
+    print("=== Hasil Normalisasi ===")
+    for row in hasil_normalisasi:
+        print(f"{row[0]}, {row[1]}, {row[2]}, {row[3]:.3f}")
+
+
+if __name__ == "__main__":
+    main()
