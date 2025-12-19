@@ -1,0 +1,87 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+# =====================
+# DATA GEOMAGNETIK
+# =====================
+data_magnetik = {
+    "X": [0, 0, 50, 50, 100, 100],
+    "Y": [0, 50, 0, 50, 0, 50],
+    "Total_Field": [43210, 43280, 43100, 43420, 43050, 43500]
+}
+
+df = pd.DataFrame(data_magnetik)
+
+print("=== Data Geomagnetik ===")
+print(df)
+print()
+print(f"Jumlah titik pengukuran : {len(df)}")
+print(f"Nilai maksimum          : {df['Total_Field'].max()} nT")
+print(f"Nilai minimum           : {df['Total_Field'].min()} nT")
+
+
+# =====================
+# PERSIAPAN GRID DATA
+# =====================
+pivot_data = df.pivot(index="Y", columns="X", values="Total_Field")
+
+x_vals = pivot_data.columns.values
+y_vals = pivot_data.index.values
+X_grid, Y_grid = np.meshgrid(x_vals, y_vals)
+Z_grid = pivot_data.values
+
+
+# =====================
+# VISUALISASI
+# =====================
+plt.figure(figsize=(8, 6))
+
+kontur = plt.contourf(
+    X_grid,
+    Y_grid,
+    Z_grid,
+    levels=20,
+    cmap="RdYlBu_r"
+)
+plt.colorbar(kontur, label="Intensitas Medan Magnet (nT)")
+
+plt.scatter(
+    df["X"],
+    df["Y"],
+    color="black",
+    s=35,
+    edgecolors="white",
+    linewidths=1,
+    label="Titik Pengukuran"
+)
+
+for _, row in df.iterrows():
+    plt.text(
+        row["X"],
+        row["Y"] + 2,
+        f"{row['Total_Field']}",
+        ha="center",
+        fontsize=8
+    )
+
+plt.xlabel("Koordinat X (m)")
+plt.ylabel("Koordinat Y (m)")
+plt.title("Peta Anomali Magnetik\n(Modul 9)")
+plt.grid(alpha=0.3)
+plt.legend()
+
+plt.tight_layout()
+plt.savefig("peta_magnetik.png", dpi=150)
+plt.show()
+
+
+# =====================
+# OUTPUT FILE
+# =====================
+df.to_csv("data_magnetik.csv", index=False)
+
+print("\n=== File Output ===")
+print("- data_magnetik.csv")
+print("- peta_magnetik.png")
