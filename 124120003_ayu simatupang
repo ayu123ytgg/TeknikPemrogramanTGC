@@ -1,0 +1,82 @@
+import csv
+
+# =====================
+# DATA AWAL (SIMULASI)
+# =====================
+DATA = [
+    ['shot', 'receiver', 'twt'],
+    [0, 100, 200],
+    [0, 200, 350],
+    [0, 300, 480],
+    [0, 400, 600]
+]
+
+
+def tampilkan_data(data, judul):
+    print(judul)
+    for row in data:
+        print(row)
+    print()
+
+
+def normalisasi_twt(data, twt_batas=600):
+    if not data or data[0][2] != 'twt':
+        raise ValueError("Kolom 'twt' tidak ditemukan.")
+
+    header, rows = data[0], data[1:]
+
+    twt_list = []
+    for i, r in enumerate(rows, start=1):
+        try:
+            twt_list.append(float(r[2]))
+        except (IndexError, ValueError, TypeError):
+            raise ValueError(f"Nilai TWT tidak valid pada baris {i}: {r}")
+
+    if not twt_list:
+        raise ValueError("Data TWT kosong.")
+
+    twt_min = min(twt_list)
+    twt_max_data = max(twt_list)
+
+    if twt_max_data > twt_batas:
+        print(f"Peringatan: TWT maksimum data ({twt_max_data}) > {twt_batas}")
+
+    denominator = twt_batas - twt_min
+    if denominator == 0:
+        raise ValueError("Denominator nol, normalisasi gagal.")
+
+    hasil = [header + ['twt_norm']]
+    for r in rows:
+        twt = float(r[2])
+        twt_norm = (twt - twt_min) / denominator
+        hasil.append(r + [round(twt_norm, 4)])
+
+    return hasil
+
+
+def simpan_csv(nama_file, data):
+    with open(nama_file, 'w', newline='', encoding='utf-8') as f:
+        csv.writer(f).writerows(data)
+
+
+# =====================
+# PROGRAM UTAMA
+# =====================
+tampilkan_data(DATA, "=== Data Awal ===")
+
+try:
+    data_norm = normalisasi_twt(DATA)
+    tampilkan_data(data_norm, "=== Data Setelah Normalisasi ===")
+
+    nama_file = "normalized_data.csv"
+    simpan_csv(nama_file, data_norm)
+
+    print(f"Data berhasil disimpan ke: {nama_file}")
+    print("Preview isi file:")
+    with open(nama_file, 'r', encoding='utf-8') as f:
+        print(f.read())
+
+except ValueError as err:
+    print(f"Error normalisasi: {err}")
+except Exception as err:
+    print(f"Error tak terduga: {err}")
